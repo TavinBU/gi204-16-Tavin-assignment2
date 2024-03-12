@@ -6,7 +6,7 @@ using Button = UnityEngine.UI.Button;
 
 public class MoveRB : MonoBehaviour
 {
-    public float moveSpeed = 10f;
+    [SerializeField] public float moveSpeed = 10f;
     public float rotationSpeed = 50f;
 
     private Rigidbody rb;
