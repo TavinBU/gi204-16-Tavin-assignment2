@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Button = UnityEngine.UI.Button;
+
 
 public class MoveRB : MonoBehaviour
 {
-    [SerializeField] public float moveSpeed = 10f;
-    public float rotationSpeed = 50f;
+   
 
-    private Rigidbody rb;
+    public Rigidbody rb;
+    public float enginePowerThrust, liftBooster, drag, angularDrag;
+
 
     void Start()
     {
@@ -18,20 +18,25 @@ public class MoveRB : MonoBehaviour
 
     void FixedUpdate()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
-        // การเคลื่อนที่
-        Vector3 movement = new Vector3(horizontal, 0f, vertical) * moveSpeed * Time.fixedDeltaTime;
-        Vector3 relativeMovement = transform.TransformDirection(movement);
-        rb.MovePosition(rb.position + relativeMovement);
-
-        // การหมุน
-        if (horizontal != 0)
+        //1
+        if (Input.GetKey(KeyCode.Space)) 
         {
-            float rotation = rotationSpeed * Time.fixedDeltaTime * horizontal;
-            Quaternion turnAngle = Quaternion.Euler(0f, rotation, 0f);
-            rb.MoveRotation(rb.rotation * turnAngle);
+            rb.AddForce(transform.forward * enginePowerThrust);
         }
+
+        //2
+        Vector3 lift = Vector3.Project(rb.velocity, transform.forward);
+        rb.AddForce(transform.up * lift.magnitude * liftBooster);
+
+        //3
+        rb.drag = rb.velocity.magnitude * drag;
+        rb.angularDrag = rb.velocity.magnitude * angularDrag;
+
+        //4
+        //4.1
+        rb.AddTorque(Input.GetAxis("Horizontal") * transform.forward * -1);
+
+        //4.2
+        rb.AddTorque(Input.GetAxis("Vertical") * transform.right);
     }
 }
